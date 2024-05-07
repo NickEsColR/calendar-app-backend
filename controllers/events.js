@@ -1,10 +1,10 @@
 const Event = require("../models/Event");
 
-const getEvents = async(req, res) => {
+const getEvents = async (req, res) => {
     const events = await Event.find().populate("user", "name");
     res.json({
         ok: true,
-        events
+        events,
     });
 };
 const addEvent = async (req, res) => {
@@ -26,20 +26,20 @@ const addEvent = async (req, res) => {
         });
     }
 };
-const updateEvent = async(req, res) => {
+const updateEvent = async (req, res) => {
     const eventId = req.params.id;
     const uid = req.uid;
 
-    try{
+    try {
         const event = await Event.findById(eventId);
-        if(!event){
+        if (!event) {
             return res.status(404).json({
                 ok: false,
                 message: "Event not found",
             });
         }
 
-        if(event.user.toString() !== uid){
+        if (event.user.toString() !== uid) {
             return res.status(401).json({
                 ok: false,
                 message: "You do not have the necessary permissions",
@@ -51,13 +51,15 @@ const updateEvent = async(req, res) => {
             user: uid,
         };
 
-        const updatedEvent = await Event.findByIdAndUpdate(eventId, newEvent, {new: true});
+        const updatedEvent = await Event.findByIdAndUpdate(eventId, newEvent, {
+            new: true,
+        });
 
         res.json({
             ok: true,
             event: updatedEvent,
         });
-    }catch(error){
+    } catch (error) {
         console.log(error);
         res.status(500).json({
             ok: false,
@@ -65,11 +67,38 @@ const updateEvent = async(req, res) => {
         });
     }
 };
-const deleteEvent = (req, res) => {
-    res.json({
-        ok: true,
-        message: "DELTE Events",
-    });
+const deleteEvent = async (req, res) => {
+    const eventId = req.params.id;
+    const uid = req.uid;
+
+    try {
+        const event = await Event.findById(eventId);
+        if (!event) {
+            return res.status(404).json({
+                ok: false,
+                message: "Event not found",
+            });
+        }
+
+        if (event.user.toString() !== uid) {
+            return res.status(401).json({
+                ok: false,
+                message: "You do not have the necessary permissions",
+            });
+        }
+
+        await Event.findByIdAndDelete(eventId);
+
+        res.json({
+            ok: true,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            message: "Please contact the administrator",
+        });
+    }
 };
 
 module.exports = {
