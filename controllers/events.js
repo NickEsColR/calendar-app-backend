@@ -1,9 +1,10 @@
 const Event = require("../models/Event");
 
-const getEvents = (req, res) => {
+const getEvents = async(req, res) => {
+    const events = await Event.find().populate("user", "name");
     res.json({
         ok: true,
-        message: "GET Events",
+        events
     });
 };
 const addEvent = async (req, res) => {
@@ -24,10 +25,6 @@ const addEvent = async (req, res) => {
             message: "Please contact the administrator",
         });
     }
-    res.json({
-        ok: true,
-        message: "POST Event",
-    });
 };
 const updateEvent = (req, res) => {
     res.json({
