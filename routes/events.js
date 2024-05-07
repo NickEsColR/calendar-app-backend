@@ -13,6 +13,7 @@ const {
     updateEvent,
     deleteEvent,
 } = require("../controllers/events");
+
 const { isDate } = require("../helpers/isDate");
 
 const router = Router();

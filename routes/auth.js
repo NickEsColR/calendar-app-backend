@@ -9,6 +9,7 @@ const { check } = require("express-validator");
 
 const { createUser, loginUser, renewToken } = require("../controllers/auth");
 const { validate } = require("../middlewares/validate");
+const { validarJWT } = require("../middlewares/validate-jwt");
 
 router.post(
     "/new",
@@ -38,13 +39,7 @@ router.post(
 
 router.get(
     "/renew",
-    [
-        check("email", "Agrega un email válido").isEmail(),
-        check("password", "El password debe ser de 6 caracteres").isLength({
-            min: 6,
-        }),
-        validate,
-    ],
+    validarJWT,
     renewToken
 );
 
